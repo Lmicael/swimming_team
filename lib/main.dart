@@ -45,9 +45,12 @@ class GlassEffectWidget extends StatelessWidget {
 
   List<Pessoas> usuarios = [
     // Lista de usuários predefinidos
-    Pessoas(email: "teste01@teste.com", senha: "123", tipoUser: "adm"),
-    Pessoas(email: "teste02@teste.com", senha: "456", tipoUser: "treinador"),
-    Pessoas(email: "teste03@teste.com", senha: "789", tipoUser: "atleta")
+    Pessoas(email: "joao@sou.unaerp.edu.br", senha: "12345", tipoUser: "adm"),
+    Pessoas(email: "carla@sou.unaerp.edu.br", senha: "45678", tipoUser: "treinador"),
+    Pessoas(email: "maria@sou.unaerp.edu.br", senha: "78900", tipoUser: "atleta"),
+    Pessoas(email: "luis@sou.unaerp.edu.br", senha: "12345", tipoUser: "adm"),
+    Pessoas(email: "wilmar@sou.unaerp.edu.br", senha: "45678", tipoUser: "treinador"),
+    Pessoas(email: "steve@sou.unaerp.edu.br", senha: "78900", tipoUser: "atleta")
   ];
 
   // Função para lidar com a solicitação de redefinição de senha

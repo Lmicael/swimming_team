@@ -35,7 +35,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   //Valor inicial do dropdown
   String dropdownValue = 'Administrador';
-  String greeting = '';
 
   //Função chamada quando o botão de registro é pressionado
   void _registerUser() {
@@ -48,7 +47,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       //Exibe um SnackBar indicando que o registro foi bem-sucedido
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Registration successful!'),
+          content: Text('Registro Realizado com Sucesso.'),
         ),
       );
     }
@@ -62,7 +61,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
       //Se algum campo estiver vazio, exibe um SnackBar indicando que todos os campos devem ser preenchidos
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please fill in all fields.'),
+          content: Text('Por favor, prencher todos os campos.'),
         ),
       );
       return false; //Retorna falso indicando que a validação falhou
@@ -81,7 +80,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/gradients.jpg'), // Carrega uma imagem do arquivo assets
+                image: AssetImage(
+                    'assets/gradients.jpg'), // Carrega uma imagem do arquivo assets
                 fit: BoxFit.cover,
               ),
             ),
@@ -97,7 +97,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/logo.png'), // Carrega uma imagem do arquivo assets
+                        image: AssetImage(
+                            'assets/logo.png'), // Carrega uma imagem do arquivo assets
                         fit: BoxFit.cover,
                         alignment: Alignment.topCenter,
                       ),
@@ -143,7 +144,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ),
                     child: TextFormField(
                       controller: _passwordController,
-                      obscureText: true, //Máscara para esconder o texto da senha
+                      obscureText:
+                          true, //Máscara para esconder o texto da senha
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Senha Temporária'),
