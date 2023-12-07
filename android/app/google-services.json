@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "206733763218",
+    "project_id": "mobile-ii-c311e",
+    "storage_bucket": "mobile-ii-c311e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:206733763218:android:a93312a8972340bace7c4b",
+        "android_client_info": {
+          "package_name": "com.example.teste"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr_xTQzHLbJIlAMymiukPa7IWwiknVQ7E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

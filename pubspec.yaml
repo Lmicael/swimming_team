@@ -6,23 +6,34 @@ version: 1.0.0+1
 
 environment:
   sdk: '>=3.1.2 <4.0.0'
+  flutter: ^3.16.0
 
 dependencies:
   flutter:
     sdk: flutter
   uuid: ^3.0.0 
   cupertino_icons: ^1.0.2
+  firebase_core: ^2.22.0
+  firebase_auth: ^4.4.0
+  cloud_firestore: ^4.13.1
+  image_picker: ^0.8.4
+  fl_chart: ^0.65.0 
+  file_picker: ^6.1.1
+  firebase_storage: ^11.5.3
+  url_launcher: ^6.2.1
+  firebase_app_check: ^0.2.1+6
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  font_awesome_flutter: ^9.1.0
+  intl: ^0.17.0
+  
 
 flutter:
   assets:
-    - assets/image_1.png
     - assets/logo.png
-    - assets/gradients.jpg
     - assets/Go.jpeg
 
 

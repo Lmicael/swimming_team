@@ -1,61 +1,65 @@
-//RF001
-// Importando os pacotes necessários do Flutter
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'firebase_options.dart';
 
-// Importando as telas de registro
-import 'RF002.dart';
-import 'RF003.dart';
-import 'RF004.dart';
+import 'Home_Adm.dart';
+import 'Home_Trainer.dart';
+import 'Home_Athlete.dart';
+import 'NewUser.dart';
+import 'PersonalData.dart';
+import 'TrainingRegistration.dart';
+import 'stopwatch.dart';
+import 'First_Access.dart';
+import 'Disable.dart';
+import 'PersonalData_Athlete.dart';
+import 'attachments.dart';
+import 'ConsultDoc.dart';
+import 'ConsultDoc_Athlete.dart';
+import 'Graphics.dart';
+import 'ComparisonChart.dart';
 
-// Função principal que é o ponto de entrada do aplicativo Flutter
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp());
 }
 
-// Classe principal do aplicativo que herda de StatelessWidget
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: GlassEffectWidget(),
-      //Rotas para as telas
+      home: HomeScreen(),
       routes: {
-        '/RF002': (context) => RegistrationPage(),
-        '/RF003': (context) => AthleteRegistrationScreen(),
-        '/RF004': (context) => TreinoForm(),
+        '/NewUser': (context) => RegistrationPage(),
+        '/PersonalData': (context) => AthleteRegistrationScreen(),
+        '/TrainingRegistration': (context) => TreinoForm(),
+        '/Home_Adm': (context) => HomeADM(),
+        '/Home_Trainer': (context) => HomeTrainer(),
+        '/Home_Athlete': (context) => HomeAthlete(),
+        '/StopWatch': (context) => stopwatch(),
+        '/First_Access': (context) => PrimeiroAcessoScreen(),
+        '/Desabilitado': (context) => disable(),
+        '/PersonalData_Athlete': (context) => AthleteRegistrationScreen_Athlete(),
+        '/Attachments': (context) => AttachmentScreen(),
+        '/Teste': (context) => arquivo(),
+        '/ConsultDoc_Athlete': (context) => arquivo_athlete(),
+        '/Graphic': (context) => GraphicScreen(),
+        '/CompareChart': (context) => ComparisonChart(),
       },
     );
   }
 }
 
-// Classe de modelo para representar um usuário
-class Pessoas {
-  String email;
-  String senha;
-  String tipoUser;
-
-  Pessoas({required this.email, required this.senha, required this.tipoUser});
-}
-
-// Widget GlassEffectWidget que é a tela de login
-class GlassEffectWidget extends StatelessWidget {
-  // Controladores para campos de email e senha
+class HomeScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  List<Pessoas> usuarios = [
-    // Lista de usuários predefinidos
-    Pessoas(email: "joao@sou.unaerp.edu.br", senha: "12345", tipoUser: "adm"),
-    Pessoas(email: "carla@sou.unaerp.edu.br", senha: "45678", tipoUser: "treinador"),
-    Pessoas(email: "maria@sou.unaerp.edu.br", senha: "78900", tipoUser: "atleta"),
-    Pessoas(email: "luis@sou.unaerp.edu.br", senha: "12345", tipoUser: "adm"),
-    Pessoas(email: "wilmar@sou.unaerp.edu.br", senha: "45678", tipoUser: "treinador"),
-    Pessoas(email: "steve@sou.unaerp.edu.br", senha: "78900", tipoUser: "atleta")
-  ];
-
-  // Função para lidar com a solicitação de redefinição de senha
   void handleForgotPassword(BuildContext context) {
-    // Mostra um AlertDialog para inserir o email
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -67,18 +71,61 @@ class GlassEffectWidget extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text(
-                  'Cancelar'), //Fecha o diálogo quando o botão Cancelar é pressionado
+              child: Text('Cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text(
-                  'Ok'), //Envia o email inserido para o console quando o botão Ok é pressionado
-              onPressed: () {
-                print('Email inserido: ${emailController.text}');
-                Navigator.of(context).pop();
+              child: Text('Ok'),
+              onPressed: () async {
+                if (emailController.text.isNotEmpty) {
+                  try {
+                    await _auth.sendPasswordResetEmail(
+                      email: emailController.text,
+                    );
+
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Aviso'),
+                          content: Text(
+                            'Se o e-mail fornecido estiver em nosso banco de dados, você receberá um e-mail com instruções para redefinir sua senha. Por favor, verifique também sua caixa de spam.',
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Ok'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Erro'),
+                          content: Text(
+                              'Erro ao enviar o e-mail de recuperação de senha. Verifique se o e-mail está correto e tente novamente.'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('Ok'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                }
               },
             ),
           ],
@@ -87,37 +134,104 @@ class GlassEffectWidget extends StatelessWidget {
     );
   }
 
-  //Função para realizar o login
-  void login(BuildContext context) {
+  void login(BuildContext context) async {
     String inputEmail = emailController.text;
     String inputPassword = passwordController.text;
-    bool isLoggedIn = false;
 
-    //Itera sobre a lista de usuários e verifica as credenciais inseridas
-    for (int i = 0; i < usuarios.length; i++) {
-      //Navega para a tela correspondente com base no tipo de usuário
-      if (usuarios[i].email == inputEmail &&
-          usuarios[i].senha == inputPassword) {
-        isLoggedIn = true;
-        if (usuarios[i].tipoUser == "adm") {
-          Navigator.pushNamed(context, '/RF002');
-        } else if (usuarios[i].tipoUser == "treinador") {
-          Navigator.pushNamed(context, '/RF003');
-        } else if (usuarios[i].tipoUser == "atleta") {
-          Navigator.pushNamed(context, '/RF004');
-        }
-        break;
-      }
+    if (inputEmail.isEmpty || inputPassword.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Campo vazio'),
+            content: Text('Por favor, preencha todos os campos.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      return;
     }
 
-    if (!isLoggedIn) {
-      //Mostrar uma mensagem de erro, usuário ou senha incorretos
+    try {
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: inputEmail,
+        password: inputPassword,
+      );
+
+      User? user = userCredential.user;
+
+      DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+          .collection('users_authentication')
+          .doc(user?.uid)
+          .get();
+
+      if (userSnapshot.exists) {
+        String userType = userSnapshot.get('type');
+        String status = userSnapshot.get('status');
+
+        if (status == 'ativo') {
+          if (userType == 'Administrador') {
+            Navigator.pushReplacementNamed(context, '/Home_Adm');
+          } else if (userType == 'Treinador') {
+            Navigator.pushReplacementNamed(context, '/Home_Trainer');
+          } else if (userType == 'Atleta') {
+            Navigator.pushReplacementNamed(context, '/Home_Athlete');
+          }
+        } else {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text('Atenção'),
+                content: Text(
+                    'O usuário está marcado como inativo, portanto, não será possível realizar o login.'),
+                actions: <Widget>[
+                  TextButton(
+                    child: Text('Ok'),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      } else {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text('Inválido'),
+              content: Text(
+                  'Email informado não está registrado na base de dados\nSe o erro persistir, procurar o administrador do aplicativo!'),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    } on FirebaseAuthException catch (e) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Login Incorreto!'),
-            content: Text('Email ou senha incorretos!.'),
+            content: Text('Email ou senha incorretos!'),
             actions: <Widget>[
               TextButton(
                 child: Text('OK'),
@@ -132,48 +246,34 @@ class GlassEffectWidget extends StatelessWidget {
     }
   }
 
-  //Método build para construir a interface do usuário
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //Define o fundo da tela como uma imagem
-      backgroundColor: const Color.fromARGB(255, 5, 45, 78),
       resizeToAvoidBottomInset: true,
       body: Stack(
         children: [
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage(
-                    'assets/Go.jpeg'), //Carrega uma imagem do arquivo assets
-                fit:
-                    BoxFit.cover, //Ajusta a imagem para cobrir todo o contêiner
+                image: AssetImage('assets/Go.jpeg'),
+                fit: BoxFit.cover,
               ),
             ),
           ),
-          //Conteúdo da tela dentro de um SingleChildScrollView para permitir rolagem quando o teclado está aberto
           SingleChildScrollView(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(
-                    height: 110,
+                  SizedBox(height: 110),
+                  Image.asset(
+                    'assets/logo.png',
+                    width: 220,
+                    height: 220,
                   ),
-                  //Widget de imagem
-                  Align(
-                    child: Image.asset(
-                      'assets/logo.png',
-                      width: 220,
-                      height: 220,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                  ),
-                  //Campos de entrada para email e senha
+                  SizedBox(height: 40),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: TextField(
                       controller: emailController,
                       decoration: InputDecoration(
@@ -181,24 +281,24 @@ class GlassEffectWidget extends StatelessWidget {
                         border: OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.white,
+                        contentPadding: EdgeInsets.all(16),
                       ),
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.all(16.0),
                     child: TextField(
                       controller: passwordController,
-                      obscureText:
-                          true, //Máscara para esconder o texto da senha
+                      obscureText: true,
                       decoration: InputDecoration(
                         labelText: 'Senha',
                         border: OutlineInputBorder(),
                         filled: true,
                         fillColor: Colors.white,
+                        contentPadding: EdgeInsets.all(16),
                       ),
                     ),
                   ),
-                  //Botão para redefinir a senha
                   Align(
                     alignment: Alignment.topRight,
                     child: TextButton(
@@ -213,9 +313,7 @@ class GlassEffectWidget extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: 25,
-                  ),
+                  SizedBox(height: 25),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -224,10 +322,30 @@ class GlassEffectWidget extends StatelessWidget {
                       },
                       child: Text('Login'),
                       style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        onPrimary: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        side: BorderSide.none,
+                        padding: EdgeInsets.all(16),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 25),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/First_Access');
+                      },
+                      child: Text('Primeiro Acesso'),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        onPrimary: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: EdgeInsets.all(16),
                       ),
                     ),
                   ),
