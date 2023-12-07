@@ -73,7 +73,7 @@ class _TreinoFormState extends State<TreinoForm> {
           .collection('treinos')
           .doc(idAtletaController.text)
           .collection('sessions')
-          .doc(idAtletaController.text)
+          .doc()
           .set(formData);
 
       idAtletaController.clear();

@@ -58,13 +58,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
     if (_validateInputs()) {
       try {
-        /*UserCredential userCredential =
-            await _auth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-
-        String userId = userCredential.user!.uid;*/
         String generateID = generateRandomID().toString();
 
         await _firestore.collection('users').doc(generateID).set({

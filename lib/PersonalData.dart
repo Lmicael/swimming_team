@@ -102,24 +102,6 @@ class _AthleteRegistrationScreenState extends State<AthleteRegistrationScreen> {
       medicationAllergiesController.clear();
       stylesController.clear();
       testsController.clear();
-
-      /*showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Atleta Registrado'),
-            content: Text('As informações do atleta foram salvas.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              ),
-            ],
-          );
-        },
-      );*/
     }
   }
 

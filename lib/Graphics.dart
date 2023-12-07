@@ -1,6 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -42,12 +44,14 @@ class _GraphicScreenState extends State<GraphicScreen> {
   @override
   void initState() {
     super.initState();
+
     getTempoValues();
   }
 
   Future<void> getTempoValues() async {
     try {
-      QuerySnapshot querySnapshot = await _firestore.collection('treinos').get();
+      QuerySnapshot querySnapshot =
+          await _firestore.collection('treinos').get();
       Set<double> uniqueTempos = Set();
 
       for (QueryDocumentSnapshot document in querySnapshot.docs) {
@@ -56,6 +60,7 @@ class _GraphicScreenState extends State<GraphicScreen> {
             .doc(Id_Atleta)
             .collection('sessions')
             .get();
+        print(subCollection);
 
         for (QueryDocumentSnapshot subDocument in subCollection.docs) {
           List<dynamic> tempoList = subDocument['tempos'];
@@ -77,14 +82,18 @@ class _GraphicScreenState extends State<GraphicScreen> {
         setState(() {
           allTempos = List.from(uniqueTempos);
           atletas = [Atleta(allTempos)];
-          average = [Atleta([averageTime!])];
+          average = [
+            Atleta([averageTime!])
+          ];
         });
 
         double belowAverageThreshold = averageTime! * 0.8;
-        belowAverage = allTempos.where((tempo) => tempo <= belowAverageThreshold).toList();
+        belowAverage =
+            allTempos.where((tempo) => tempo <= belowAverageThreshold).toList();
 
         double aboveAverageThreshold = averageTime! * 1.2;
-        aboveAverage = allTempos.where((tempo) => tempo >= aboveAverageThreshold).toList();
+        aboveAverage =
+            allTempos.where((tempo) => tempo >= aboveAverageThreshold).toList();
 
         print("Média: $averageTime");
         print("Valores abaixo da média até 80%: $belowAverage");
@@ -98,7 +107,8 @@ class _GraphicScreenState extends State<GraphicScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final String? ID = (ModalRoute.of(context)!.settings.arguments as String?) ?? '';
+    final String? ID =
+        (ModalRoute.of(context)!.settings.arguments as String?) ?? '';
     Id_Atleta = ID;
 
     return Scaffold(
@@ -146,40 +156,50 @@ class _GraphicScreenState extends State<GraphicScreen> {
                 ),
               ),
               lineBarsData: [
-                if (atletas.isNotEmpty) LineChartBarData(
-                  spots: atletas[0].tempos
-                    .asMap()
-                    .entries
-                    .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
-                    .toList(),
-                ),
-                if (average.isNotEmpty) LineChartBarData(
-                  spots: average[0].tempos
-                    .asMap()
-                    .entries
-                    .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
-                    .toList(),
-                  color: Colors.red,
-                  dotData: FlDotData(show: true),
-                ),
-                if (belowAverage.isNotEmpty) LineChartBarData(
-                  spots: belowAverage
-                    .asMap()
-                    .entries
-                    .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
-                    .toList(),
-                  color: Colors.green,
-                  dotData: FlDotData(show: true),
-                ),
-                if (aboveAverage.isNotEmpty) LineChartBarData(
-                  spots: aboveAverage
-                    .asMap()
-                    .entries
-                    .map((entry) => FlSpot(entry.key.toDouble(), entry.value))
-                    .toList(),
-                  color: Color.fromARGB(255, 166, 33, 243),
-                  dotData: FlDotData(show: true),
-                ),
+                if (atletas.isNotEmpty)
+                  LineChartBarData(
+                    spots: atletas[0]
+                        .tempos
+                        .asMap()
+                        .entries
+                        .map((entry) =>
+                            FlSpot(entry.key.toDouble(), entry.value))
+                        .toList(),
+                  ),
+                if (average.isNotEmpty)
+                  LineChartBarData(
+                    spots: average[0]
+                        .tempos
+                        .asMap()
+                        .entries
+                        .map((entry) =>
+                            FlSpot(entry.key.toDouble(), entry.value))
+                        .toList(),
+                    color: Colors.red,
+                    dotData: FlDotData(show: true),
+                  ),
+                if (belowAverage.isNotEmpty)
+                  LineChartBarData(
+                    spots: belowAverage
+                        .asMap()
+                        .entries
+                        .map((entry) =>
+                            FlSpot(entry.key.toDouble(), entry.value))
+                        .toList(),
+                    color: Colors.green,
+                    dotData: FlDotData(show: true),
+                  ),
+                if (aboveAverage.isNotEmpty)
+                  LineChartBarData(
+                    spots: aboveAverage
+                        .asMap()
+                        .entries
+                        .map((entry) =>
+                            FlSpot(entry.key.toDouble(), entry.value))
+                        .toList(),
+                    color: Color.fromARGB(255, 166, 33, 243),
+                    dotData: FlDotData(show: true),
+                  ),
               ],
             )),
             Positioned(
@@ -196,8 +216,10 @@ class _GraphicScreenState extends State<GraphicScreen> {
                   children: [
                     _buildLegendItem("Azul: Tempo dos Treinos", Colors.blue),
                     _buildLegendItem("Vermelho: Média", Colors.red),
-                    _buildLegendItem("Verde: Abaixo da média até 80%", Colors.green),
-                    _buildLegendItem("Roxo: Acima da média até 120%", Color.fromARGB(255, 166, 33, 243)),
+                    _buildLegendItem(
+                        "Verde: Abaixo da média até 80%", Colors.green),
+                    _buildLegendItem("Roxo: Acima da média até 120%",
+                        Color.fromARGB(255, 166, 33, 243)),
                   ],
                 ),
               ),
